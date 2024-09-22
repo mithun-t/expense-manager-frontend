@@ -8,6 +8,7 @@ import {
   TableRow,
   Paper,
 } from "@mui/material";
+import dayjs from "dayjs";
 
 const ExpenseList = ({ expenses }) => {
   return (
@@ -32,8 +33,10 @@ const ExpenseList = ({ expenses }) => {
           <TableBody>
             {expenses.map((expense) => (
               <TableRow key={expense.id}>
-                <TableCell>{expense.date}</TableCell>
-                <TableCell>{expense.amount}</TableCell>
+                <TableCell>
+                  {dayjs(expense.date).format("MMMM D, YYYY")}
+                </TableCell>
+                <TableCell>₹ {expense.amount}</TableCell>
                 <TableCell>{expense.category_name}</TableCell>
               </TableRow>
             ))}
