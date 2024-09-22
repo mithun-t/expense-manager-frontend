@@ -4,9 +4,9 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { ThemeProvider, createTheme } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import NavBar from "./components/NavBar";
-import ExpenseManager from "./components/ExpenseManager";
-import CategoriesPage from "./components/CategoriesPage";
-import ExpensesPage from "./components/ExpensesPage";
+import ExpenseManager from "./components/Expense/ExpenseManager";
+import CategoriesPage from "./components/Category/CategoriesPage";
+import ExpensesPage from "./components/Expense/ExpensesPage";
 
 const App = () => {
   const [themeMode, setThemeMode] = useState("dark");

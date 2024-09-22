@@ -49,7 +49,7 @@ export const EnhancedTableToolbar = ({ selected, expenses }) => {
         </Typography>
       )}
       {numSelected > 0 && (
-        <Tooltip title={totalAmount}>
+        <Tooltip title={`Sum is ${totalAmount}`}>
           <IconButton>
             <FunctionsIcon />
             <Typography variant="h6">{totalAmount}</Typography>

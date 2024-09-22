@@ -38,7 +38,7 @@ const ExpensesPage = () => {
       {/* Right Side: Expense List */}
       <Grid item xs={12} md={6}>
         <Paper elevation={3} sx={{ padding: 2 }}>
-          <ExpenseList expenses={expenses} />
+          <ExpenseList expenses={expenses} categories={categories} />
         </Paper>
       </Grid>
     </Grid>

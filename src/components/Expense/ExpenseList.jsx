@@ -4,17 +4,19 @@ import {
   TableBody,
   TableCell,
   TableContainer,
-  TableHead,
   TableRow,
-  TableSortLabel,
   Paper,
   Checkbox,
   TablePagination,
-  Box,
+  Grid,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
 } from "@mui/material";
-import { visuallyHidden } from "@mui/utils";
 import dayjs from "dayjs";
-import { EnhancedTableToolbar } from "./TableComponets/EnhancedTableToolbar";
+import { EnhancedTableToolbar } from "../TableComponets/EnhancedTableToolbar";
+import EnhancedTableHead from "../TableComponets/EnhancedTableHead";
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -32,66 +34,14 @@ function getComparator(order, orderBy) {
     : (a, b) => -descendingComparator(a, b, orderBy);
 }
 
-const headCells = [
-  { id: "date", label: "Date" },
-  { id: "amount", label: "Amount", numeric: true },
-  { id: "category_name", label: "Category" },
-];
-
-function EnhancedTableHead({
-  order,
-  orderBy,
-  onRequestSort,
-  numSelected,
-  onSelectAllClick,
-  rowCount,
-}) {
-  const createSortHandler = (property) => (event) => {
-    onRequestSort(event, property);
-  };
-
-  return (
-    <TableHead>
-      <TableRow>
-        <TableCell padding="checkbox">
-          <Checkbox
-            color="primary"
-            indeterminate={numSelected > 0 && numSelected < rowCount}
-            checked={rowCount > 0 && numSelected === rowCount}
-            onChange={onSelectAllClick}
-          />
-        </TableCell>
-        {headCells.map((headCell) => (
-          <TableCell
-            key={headCell.id}
-            align={headCell.numeric ? "right" : "left"}
-            sortDirection={orderBy === headCell.id ? order : false}
-          >
-            <TableSortLabel
-              active={orderBy === headCell.id}
-              direction={orderBy === headCell.id ? order : "asc"}
-              onClick={createSortHandler(headCell.id)}
-            >
-              {headCell.label}
-              {orderBy === headCell.id ? (
-                <Box component="span" sx={visuallyHidden}>
-                  {order === "desc" ? "sorted descending" : "sorted ascending"}
-                </Box>
-              ) : null}
-            </TableSortLabel>
-          </TableCell>
-        ))}
-      </TableRow>
-    </TableHead>
-  );
-}
-
-const ExpenseList = ({ expenses }) => {
+const ExpenseList = ({ expenses, categories }) => {
   const [order, setOrder] = useState("asc");
   const [orderBy, setOrderBy] = useState("date");
   const [selected, setSelected] = useState([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [category, setCategory] = useState("");
+  console.log(expenses);
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === "asc";
@@ -101,7 +51,7 @@ const ExpenseList = ({ expenses }) => {
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelected = expenses.map((n) => n.id);
+      const newSelected = visibleRows.map((n) => n.id);
       setSelected(newSelected);
       return;
     }
@@ -135,13 +85,15 @@ const ExpenseList = ({ expenses }) => {
     setRowsPerPage(parseInt(event.target.value, 10));
     setPage(0);
   };
-
+  const filteredCategoryExpenses = category
+    ? expenses.filter((expense) => expense.category === category)
+    : expenses;
   const visibleRows = useMemo(
     () =>
-      [...expenses]
+      [...filteredCategoryExpenses]
         .sort(getComparator(order, orderBy))
         .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage),
-    [order, orderBy, page, rowsPerPage, expenses]
+    [order, orderBy, page, rowsPerPage, filteredCategoryExpenses]
   );
 
   return (
@@ -149,7 +101,33 @@ const ExpenseList = ({ expenses }) => {
       elevation={3}
       sx={{ padding: 2, maxWidth: 600, margin: "auto", mt: 4 }}
     >
-      <EnhancedTableToolbar selected={selected} expenses={expenses} />
+      <Grid container spacing={2} alignItems="center">
+        <Grid item xs={12} sm={6} md={3}>
+          <FormControl fullWidth size="small">
+            <InputLabel id="category-label">Filter by Category</InputLabel>
+            <Select
+              required
+              fullWidth
+              labelId="category-label"
+              value={category}
+              onChange={(e) => {
+                setCategory(e.target.value);
+                setSelected([]);
+              }}
+            >
+              <MenuItem value="">
+                <em>Select Category</em>
+              </MenuItem>
+              {categories.map((category) => (
+                <MenuItem key={category.id} value={category.id}>
+                  {category.name}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        </Grid>
+      </Grid>
+      <EnhancedTableToolbar selected={selected} expenses={visibleRows} />
       <TableContainer>
         <Table aria-labelledby="tableTitle">
           <EnhancedTableHead
@@ -188,7 +166,7 @@ const ExpenseList = ({ expenses }) => {
         </Table>
       </TableContainer>
       <TablePagination
-        rowsPerPageOptions={[5, 10, 25]}
+        rowsPerPageOptions={[50, 100, 250]}
         component="div"
         count={expenses.length}
         rowsPerPage={rowsPerPage}
