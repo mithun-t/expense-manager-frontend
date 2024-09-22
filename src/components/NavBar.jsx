@@ -1,16 +1,21 @@
 // src/components/NavBar.jsx
 import React from "react";
-import { AppBar, Toolbar, Typography, Button } from "@mui/material";
+import { AppBar, Toolbar, Typography, Button, Switch } from "@mui/material";
 import { Link } from "react-router-dom";
 
-const NavBar = ({ toggleTheme }) => {
+const NavBar = ({ toggleTheme, isDarkMode }) => {
   return (
     <AppBar position="static">
       <Toolbar>
         <Typography variant="h6" sx={{ flexGrow: 1 }}>
           Expense Manager
         </Typography>
-        <Button onClick={toggleTheme}>Theme</Button>
+        <Switch
+          checked={isDarkMode}
+          onChange={toggleTheme}
+          inputProps={{ "aria-label": "controlled" }}
+          color="default"
+        />
         <Button color="inherit" component={Link} to="/">
           Home
         </Button>

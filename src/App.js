@@ -25,7 +25,7 @@ const App = () => {
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <Router>
-        <NavBar toggleTheme={toggleTheme} />
+        <NavBar toggleTheme={toggleTheme} isDarkMode={themeMode === "dark"} />
         <Routes>
           <Route path="/" element={<ExpenseManager />} />
           <Route path="/categories" element={<CategoriesPage />} />

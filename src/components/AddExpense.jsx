@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
-import { MobileDatePicker } from "@mui/x-date-pickers/MobileDatePicker";
-import { LocalizationProvider } from "@mui/x-date-pickers";
+import { DatePicker, LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import TextField from "@mui/material/TextField";
 import dayjs from "dayjs";
@@ -51,14 +50,13 @@ const AddExpenseForm = ({ categories, fetchExpenses }) => {
         <>
           <Grid container spacing={2} alignItems="center">
             <Grid item xs={12} sm={6} md={3}>
-              <MobileDatePicker
-                label="Date"
-                value={newExpense.date}
-                onChange={handleDateChange}
-                renderInput={(params) => (
-                  <TextField {...params} fullWidth size="small" />
-                )}
-              />
+              <FormControl fullWidth size="small">
+                <DatePicker
+                  label="Date"
+                  value={newExpense.date}
+                  onChange={handleDateChange}
+                />
+              </FormControl>
             </Grid>
 
             <Grid item xs={12} sm={6} md={3}>

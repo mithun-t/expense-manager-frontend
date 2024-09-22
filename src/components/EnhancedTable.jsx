@@ -1,3 +1,4 @@
+// components/EnhancedTable.js
 import React, { useState, useMemo } from "react";
 import {
   Table,
@@ -21,36 +22,29 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import { visuallyHidden } from "@mui/utils";
 import dayjs from "dayjs";
 
-function descendingComparator(a, b, orderBy) {
-  if (b[orderBy] < a[orderBy]) {
-    return -1;
-  }
-  if (b[orderBy] > a[orderBy]) {
-    return 1;
-  }
+// Helper Functions
+const descendingComparator = (a, b, orderBy) => {
+  if (b[orderBy] < a[orderBy]) return -1;
+  if (b[orderBy] > a[orderBy]) return 1;
   return 0;
-}
+};
 
-function getComparator(order, orderBy) {
+const getComparator = (order, orderBy) => {
   return order === "desc"
     ? (a, b) => descendingComparator(a, b, orderBy)
     : (a, b) => -descendingComparator(a, b, orderBy);
-}
+};
 
-const headCells = [
-  { id: "date", label: "Date" },
-  { id: "amount", label: "Amount", numeric: true },
-  { id: "category_name", label: "Category" },
-];
-
-function EnhancedTableHead({
+// Table Head Component
+const EnhancedTableHead = ({
   order,
   orderBy,
   onRequestSort,
   numSelected,
   onSelectAllClick,
   rowCount,
-}) {
+  headCells,
+}) => {
   const createSortHandler = (property) => (event) => {
     onRequestSort(event, property);
   };
@@ -89,9 +83,10 @@ function EnhancedTableHead({
       </TableRow>
     </TableHead>
   );
-}
+};
 
-function EnhancedTableToolbar({ numSelected }) {
+// Toolbar Component
+const EnhancedTableToolbar = ({ numSelected, title }) => {
   return (
     <Toolbar
       sx={{
@@ -122,7 +117,7 @@ function EnhancedTableToolbar({ numSelected }) {
           id="tableTitle"
           component="div"
         >
-          Expense List
+          {title}
         </Typography>
       )}
 
@@ -135,11 +130,17 @@ function EnhancedTableToolbar({ numSelected }) {
       ) : null}
     </Toolbar>
   );
-}
+};
 
-const ExpenseList = ({ expenses }) => {
+// Generic Table Component
+const EnhancedTable = ({
+  data,
+  headCells,
+  title,
+  rowIdField = "id", // Define the field that holds unique row id
+}) => {
   const [order, setOrder] = useState("asc");
-  const [orderBy, setOrderBy] = useState("date");
+  const [orderBy, setOrderBy] = useState(headCells[0].id); // Default to the first column
   const [selected, setSelected] = useState([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(5);
@@ -152,7 +153,7 @@ const ExpenseList = ({ expenses }) => {
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelected = expenses.map((n) => n.id);
+      const newSelected = data.map((n) => n[rowIdField]);
       setSelected(newSelected);
       return;
     }
@@ -189,10 +190,10 @@ const ExpenseList = ({ expenses }) => {
 
   const visibleRows = useMemo(
     () =>
-      [...expenses]
+      [...data]
         .sort(getComparator(order, orderBy))
         .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage),
-    [order, orderBy, page, rowsPerPage, expenses]
+    [order, orderBy, page, rowsPerPage, data]
   );
 
   return (
@@ -200,7 +201,7 @@ const ExpenseList = ({ expenses }) => {
       elevation={3}
       sx={{ padding: 2, maxWidth: 600, margin: "auto", mt: 4 }}
     >
-      <EnhancedTableToolbar numSelected={selected.length} />
+      <EnhancedTableToolbar numSelected={selected.length} title={title} />
       <TableContainer>
         <Table aria-labelledby="tableTitle">
           <EnhancedTableHead
@@ -209,29 +210,35 @@ const ExpenseList = ({ expenses }) => {
             orderBy={orderBy}
             onSelectAllClick={handleSelectAllClick}
             onRequestSort={handleRequestSort}
-            rowCount={expenses.length}
+            rowCount={data.length}
+            headCells={headCells}
           />
           <TableBody>
-            {visibleRows.map((expense) => {
-              const isItemSelected = selected.includes(expense.id);
+            {visibleRows.map((row) => {
+              const isItemSelected = selected.includes(row[rowIdField]);
               return (
                 <TableRow
                   hover
-                  onClick={(event) => handleClick(event, expense.id)}
+                  onClick={(event) => handleClick(event, row[rowIdField])}
                   role="checkbox"
                   aria-checked={isItemSelected}
                   tabIndex={-1}
-                  key={expense.id}
+                  key={row[rowIdField]}
                   selected={isItemSelected}
                 >
                   <TableCell padding="checkbox">
                     <Checkbox checked={isItemSelected} />
                   </TableCell>
-                  <TableCell>
-                    {dayjs(expense.date).format("MMMM D, YYYY")}
-                  </TableCell>
-                  <TableCell align="right">₹ {expense.amount}</TableCell>
-                  <TableCell>{expense.category_name}</TableCell>
+                  {headCells.map((cell) => (
+                    <TableCell
+                      key={`${row[rowIdField]}-${cell.id}`}
+                      align={cell.numeric ? "right" : "left"}
+                    >
+                      {cell.id === "date"
+                        ? dayjs(row[cell.id]).format("MMMM D, YYYY")
+                        : row[cell.id]}
+                    </TableCell>
+                  ))}
                 </TableRow>
               );
             })}
@@ -241,7 +248,7 @@ const ExpenseList = ({ expenses }) => {
       <TablePagination
         rowsPerPageOptions={[5, 10, 25]}
         component="div"
-        count={expenses.length}
+        count={data.length}
         rowsPerPage={rowsPerPage}
         page={page}
         onPageChange={handleChangePage}
@@ -251,4 +258,4 @@ const ExpenseList = ({ expenses }) => {
   );
 };
 
-export default ExpenseList;
+export default EnhancedTable;
