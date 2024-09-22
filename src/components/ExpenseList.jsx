@@ -10,16 +10,11 @@ import {
   Paper,
   Checkbox,
   TablePagination,
-  Toolbar,
-  Typography,
-  IconButton,
-  Tooltip,
   Box,
-  alpha,
 } from "@mui/material";
-import DeleteIcon from "@mui/icons-material/Delete";
 import { visuallyHidden } from "@mui/utils";
 import dayjs from "dayjs";
+import { EnhancedTableToolbar } from "./TableComponets/EnhancedTableToolbar";
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -91,52 +86,6 @@ function EnhancedTableHead({
   );
 }
 
-function EnhancedTableToolbar({ numSelected }) {
-  return (
-    <Toolbar
-      sx={{
-        pl: { sm: 2 },
-        pr: { xs: 1, sm: 1 },
-        ...(numSelected > 0 && {
-          bgcolor: (theme) =>
-            alpha(
-              theme.palette.primary.main,
-              theme.palette.action.activatedOpacity
-            ),
-        }),
-      }}
-    >
-      {numSelected > 0 ? (
-        <Typography
-          sx={{ flex: "1 1 100%" }}
-          color="inherit"
-          variant="subtitle1"
-          component="div"
-        >
-          {numSelected} selected
-        </Typography>
-      ) : (
-        <Typography
-          sx={{ flex: "1 1 100%" }}
-          variant="h6"
-          id="tableTitle"
-          component="div"
-        >
-          Expense List
-        </Typography>
-      )}
-
-      {numSelected > 0 ? (
-        <Tooltip title="Delete">
-          <IconButton>
-            <DeleteIcon />
-          </IconButton>
-        </Tooltip>
-      ) : null}
-    </Toolbar>
-  );
-}
-
 const ExpenseList = ({ expenses }) => {
   const [order, setOrder] = useState("asc");
   const [orderBy, setOrderBy] = useState("date");
@@ -200,7 +149,7 @@ const ExpenseList = ({ expenses }) => {
       elevation={3}
       sx={{ padding: 2, maxWidth: 600, margin: "auto", mt: 4 }}
     >
-      <EnhancedTableToolbar numSelected={selected.length} />
+      <EnhancedTableToolbar selected={selected} expenses={expenses} />
       <TableContainer>
         <Table aria-labelledby="tableTitle">
           <EnhancedTableHead
