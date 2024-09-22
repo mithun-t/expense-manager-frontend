@@ -9,6 +9,7 @@ import Button from "@mui/material/Button";
 import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
 import InputLabel from "@mui/material/InputLabel";
+import { Paper } from "@mui/material";
 
 const AddExpenseForm = ({ categories, fetchExpenses }) => {
   const [newExpense, setNewExpense] = useState({
@@ -35,60 +36,70 @@ const AddExpenseForm = ({ categories, fetchExpenses }) => {
   };
 
   return (
-    <LocalizationProvider dateAdapter={AdapterDayjs}>
-      <div>
-        <h2>Add Expense</h2>
-        <MobileDatePicker
-          label="Date"
-          value={newExpense.date}
-          onChange={handleDateChange}
-          renderInput={(params) => <TextField {...params} fullWidth />}
-        />
-        <TextField
-          fullWidth
-          size="small"
-          label="Amount"
-          variant="outlined"
-          value={newExpense.amount}
-          onChange={(e) =>
-            setNewExpense({ ...newExpense, amount: e.target.value })
-          }
-          sx={{ my: 2 }}
-        />
-        <InputLabel id="category-label">Category</InputLabel>
-        <Select
-          fullWidth
-          labelId="category-label"
-          value={newExpense.category}
-          onChange={(e) =>
-            setNewExpense({ ...newExpense, category: e.target.value })
-          }
-        >
-          <MenuItem value="">
-            <em>Select Category</em>
-          </MenuItem>
-          {categories.map((category) => (
-            <MenuItem key={category.id} value={category.id}>
-              {category.name}
+    <Paper
+      elevation={3}
+      sx={{
+        padding: 2,
+        maxWidth: 600,
+        margin: "auto",
+        mt: 4,
+      }}
+    >
+      <LocalizationProvider dateAdapter={AdapterDayjs}>
+        <div>
+          <h2>Add Expense</h2>
+          <MobileDatePicker
+            label="Date"
+            value={newExpense.date}
+            onChange={handleDateChange}
+            renderInput={(params) => <TextField {...params} fullWidth />}
+          />
+          <TextField
+            fullWidth
+            size="small"
+            label="Amount"
+            variant="outlined"
+            value={newExpense.amount}
+            onChange={(e) =>
+              setNewExpense({ ...newExpense, amount: e.target.value })
+            }
+            sx={{ my: 2 }}
+          />
+          <InputLabel id="category-label">Category</InputLabel>
+          <Select
+            fullWidth
+            labelId="category-label"
+            value={newExpense.category}
+            onChange={(e) =>
+              setNewExpense({ ...newExpense, category: e.target.value })
+            }
+          >
+            <MenuItem value="">
+              <em>Select Category</em>
             </MenuItem>
-          ))}
-        </Select>
-        <TextField
-          fullWidth
-          size="small"
-          label="Description"
-          variant="outlined"
-          value={newExpense.description}
-          onChange={(e) =>
-            setNewExpense({ ...newExpense, description: e.target.value })
-          }
-          sx={{ my: 2 }}
-        />
-        <Button variant="contained" onClick={handleAddExpense}>
-          Add Expense
-        </Button>
-      </div>
-    </LocalizationProvider>
+            {categories.map((category) => (
+              <MenuItem key={category.id} value={category.id}>
+                {category.name}
+              </MenuItem>
+            ))}
+          </Select>
+          <TextField
+            fullWidth
+            size="small"
+            label="Description"
+            variant="outlined"
+            value={newExpense.description}
+            onChange={(e) =>
+              setNewExpense({ ...newExpense, description: e.target.value })
+            }
+            sx={{ my: 2 }}
+          />
+          <Button variant="contained" onClick={handleAddExpense}>
+            Add Expense
+          </Button>
+        </div>
+      </LocalizationProvider>
+    </Paper>
   );
 };
 
