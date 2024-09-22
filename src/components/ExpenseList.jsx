@@ -25,7 +25,7 @@ const ExpenseList = ({ expenses }) => {
             <TableRow key={expense.id}>
               <TableCell>{expense.date}</TableCell>
               <TableCell>{expense.amount}</TableCell>
-              <TableCell>{expense.category.name}</TableCell>
+              <TableCell>{expense.category_name}</TableCell>
             </TableRow>
           ))}
         </TableBody>
