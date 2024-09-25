@@ -13,6 +13,7 @@ import {
   InputLabel,
   Select,
   MenuItem,
+  Typography,
 } from "@mui/material";
 import dayjs from "dayjs";
 import { EnhancedTableToolbar } from "../TableComponets/EnhancedTableToolbar";
@@ -42,7 +43,10 @@ const ExpenseList = ({ expenses, categories }) => {
   const [rowsPerPage, setRowsPerPage] = useState(5);
   const [category, setCategory] = useState("");
   console.log(expenses);
-
+  const totalAmount = expenses.reduce(
+    (sum, expense) => sum + expense.amount,
+    0
+  );
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === "asc";
     setOrder(isAsc ? "desc" : "asc");
@@ -102,7 +106,7 @@ const ExpenseList = ({ expenses, categories }) => {
       sx={{ padding: 2, maxWidth: 600, margin: "auto", mt: 4 }}
     >
       <Grid container spacing={2} alignItems="center">
-        <Grid item xs={12} sm={6} md={3}>
+        <Grid item xs={12} sm={4} md={4}>
           <FormControl fullWidth size="small">
             <InputLabel id="category-label">Filter by Category</InputLabel>
             <Select
@@ -164,6 +168,7 @@ const ExpenseList = ({ expenses, categories }) => {
             })}
           </TableBody>
         </Table>
+        <Typography>Total Expense {totalAmount}</Typography>
       </TableContainer>
       <TablePagination
         rowsPerPageOptions={[50, 100, 250]}
